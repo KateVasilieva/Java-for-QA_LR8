@@ -1,63 +1,80 @@
 package com.gmail.lingaleo;
 
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 import java.util.concurrent.TimeUnit;
+
+import static com.thoughtworks.selenium.SeleneseTestNgHelper.assertEquals;
 
 public class Main {
 
     public static WebDriver driver;
 
-    @BeforeClass
+    @BeforeTest
     public static void setup() {
         System.setProperty("webdriver.chrome.driver", "/Users/kate/Java_for_QA/chromedriver");
         driver = new ChromeDriver();
         driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
-
     }
 
     @Test
     public void successfullLoginToLinguaLeo() {
 
         driver.get("https://lingualeo.com/ru#welcome");
-        WebElement headLoginButton = driver.findElement(By.id("headEnterBtn"));
-        headLoginButton.click();
-        WebElement loginField = driver.findElement(By.xpath("//*[@id=\"loginForm\"]/div/div[1]/input"));
-        loginField.sendKeys("vasilieva.katerina26@gmail.com");
-        WebElement passwordField = driver.findElement(By.xpath("//*[@id=\"loginForm\"]/div/div[2]/input"));
-        passwordField.sendKeys("d9PWnw");
-        WebElement LoginButton = driver.findElement(By.xpath("//*[@id=\"loginForm\"]/button"));
-        LoginButton.click();
+
+        String appTitle = driver.getTitle();
+        String expectedTitle = "Lingualeo — английский язык онлайн";
+        assertEquals(appTitle, expectedTitle);
+
+        String loginButton = "//*[@id='headEnterBtn']";
+        String emailInput = "//form[@id='loginForm']//child::*[@name='email']";
+        String passwordInput = "//form[@id='loginForm']//child::*[@name='password']";
+        String submitButton = "//*[@id='loginForm']/child::*[contains(text(),'Войти')]";
+
+        driver.findElement(By.xpath(loginButton)).click();
+        driver.findElement(By.xpath(emailInput)).sendKeys("vasilieva.katerina26@gmail.com");
+        driver.findElement(By.xpath(passwordInput)).sendKeys("d9PWnw");
+        driver.findElement(By.xpath(submitButton)).click();
 
         WebElement dynamicElement = (new WebDriverWait(driver, 10)).until(ExpectedConditions.
                 presenceOfElementLocated(By.xpath("//*[@id=\"tabsControl\"]/li[1]/a")));
-        Assert.assertEquals("Мои задания", driver.getTitle());
 
-        driver.quit();
+        Assert.assertEquals(driver.getTitle(), "Мои задания");
+
     }
 
 
     @Test
     public void loginToLinguaLeoWithWrongPassword() {
         driver.get("https://lingualeo.com/ru#welcome");
-        driver.findElement(By.id("headEnterBtn")).click();  //кликаем на кнопку Войти
-        driver.findElement(By.xpath("//*[@id=\"loginForm\"]/div/div[1]/input")).sendKeys("vasilieva.katerina26@gmail.com");  //вводим email
-        driver.findElement(By.xpath("//*[@id=\"loginForm\"]/div/div[2]/input")).sendKeys("123456");  //вводим неверный пароль
-        driver.findElement(By.xpath("//*[@id=\"loginForm\"]/button")).click();  //кликаем на кнопку Войти
-        driver.findElement(By.xpath("/html/body/div[8]/div[2]/div/div[2]/div/div[3]/div/div[2]/div/div[3]/div/p"));
 
-        int time=1;
+        String appTitle = driver.getTitle();
+        String expectedTitle = "Lingualeo — английский язык онлайн";
+        assertEquals(appTitle, expectedTitle);
+
+        String loginButton = "//*[@id='headEnterBtn']";
+        String emailInput = "//form[@id='loginForm']//child::*[@name='email']";
+        String passwordInput = "//form[@id='loginForm']//child::*[@name='password']";
+        String submitButton = "//*[@id='loginForm']/child::*[contains(text(),'Войти')]";
+
+        driver.findElement(By.xpath(loginButton)).click();
+        driver.findElement(By.xpath(emailInput)).sendKeys("vasilieva.katerina26@gmail.com");
+        driver.findElement(By.xpath(passwordInput)).sendKeys("123456");
+        driver.findElement(By.xpath(submitButton)).click();
+
+        int time = 1;
         try {
             // thread to sleep for 1000 milliseconds
             Thread.sleep(time * 1000);
@@ -65,66 +82,84 @@ public class Main {
             System.out.println(e);
         }
 
-        WebElement invalidLoginText = driver.findElement(By.xpath("/html/body/div[8]/div[2]/div/div[2]/div/div[3]/div/div[2]/div/div[3]/div/p"));
-        Assert.assertEquals("Пароль/email введены неверно", invalidLoginText.getText());
+        String expectedInvalidText = "Пароль/email введены неверно";
+        String invalidLoginText = "p.uauth-email__error.t-ellps";
+        assertEquals(driver.findElement(By.cssSelector(invalidLoginText)).getText(), expectedInvalidText);
 
-        driver.quit();
     }
 
 
     @Test
-    public void navigateToMyProgressMenu () {
+    public void navigateToMyProgressMenu() {
         driver.get("https://lingualeo.com/ru#welcome");
-        WebElement headLoginButton = driver.findElement(By.id("headEnterBtn"));
-        headLoginButton.click();
-        WebElement loginField = driver.findElement(By.xpath("//*[@id=\"loginForm\"]/div/div[1]/input"));
-        loginField.sendKeys("vasilieva.katerina26@gmail.com");
-        WebElement passwordField = driver.findElement(By.xpath("//*[@id=\"loginForm\"]/div/div[2]/input"));
-        passwordField.sendKeys("d9PWnw");
-        WebElement LoginButton = driver.findElement(By.xpath("//*[@id=\"loginForm\"]/button"));
-        LoginButton.click();
+
+        String appTitle = driver.getTitle();
+        String expectedTitle = "Lingualeo — английский язык онлайн";
+        assertEquals(appTitle, expectedTitle);
+
+        String loginButton = "//*[@id='headEnterBtn']";
+        String emailInput = "//form[@id='loginForm']//child::*[@name='email']";
+        String passwordInput = "//form[@id='loginForm']//child::*[@name='password']";
+        String submitButton = "//*[@id='loginForm']/child::*[contains(text(),'Войти')]";
+
+        driver.findElement(By.xpath(loginButton)).click();
+        driver.findElement(By.xpath(emailInput)).sendKeys("vasilieva.katerina26@gmail.com");
+        driver.findElement(By.xpath(passwordInput)).sendKeys("d9PWnw");
+        driver.findElement(By.xpath(submitButton)).click();
 
         WebElement dynamicElement = (new WebDriverWait(driver, 10)).until(ExpectedConditions.
                 presenceOfElementLocated(By.xpath("//*[@id=\"tabsControl\"]/li[1]/a")));
-        Assert.assertEquals("Мои задания", driver.getTitle());
 
-        WebElement myProgress = driver.findElement(By.xpath("//*[@id=\"tabsControl\"]/li[2]/a/i"));
-        myProgress.click();
+        Assert.assertEquals(driver.getTitle(), "Мои задания");
 
-        WebElement sitostLeo = driver.findElement(By.xpath("//*[@id=\"content\"]/div[2]/div/div[2]/div/div[1]/div"));
-        Assert.assertEquals("Сытость Лео", sitostLeo.getText());
+        String myProgress = "//*[@id=\"tabsControl\"]/li[2]/a/i";
+        driver.findElement(By.xpath(myProgress)).click();
 
-        driver.quit();
+        String expectedsitostLeo = "Сытость Лео";
+        String sitostLeo = "//*[@id=\"content\"]/div[2]/div/div[2]/div/div[1]/div";
+        assertEquals(driver.findElement(By.xpath(sitostLeo)).getText(), expectedsitostLeo);
+
     }
 
 
     @Test
-    public void addNewWordToDictionary () {
+    public void addNewWordToDictionary() {
         driver.get("https://lingualeo.com/ru#welcome");
-        WebElement headLoginButton = driver.findElement(By.id("headEnterBtn"));
-        headLoginButton.click();
-        WebElement loginField = driver.findElement(By.xpath("//*[@id=\"loginForm\"]/div/div[1]/input"));
-        loginField.sendKeys("vasilieva.katerina26@gmail.com");
-        WebElement passwordField = driver.findElement(By.xpath("//*[@id=\"loginForm\"]/div/div[2]/input"));
-        passwordField.sendKeys("d9PWnw");
-        WebElement LoginButton = driver.findElement(By.xpath("//*[@id=\"loginForm\"]/button"));
-        LoginButton.click();
+        
+        String appTitle = driver.getTitle();
+        String expectedTitle = "Lingualeo — английский язык онлайн";
+        assertEquals(appTitle, expectedTitle);
+
+        String loginButton = "//*[@id='headEnterBtn']";
+        String emailInput = "//form[@id='loginForm']//child::*[@name='email']";
+        String passwordInput = "//form[@id='loginForm']//child::*[@name='password']";
+        String submitButton = "//*[@id='loginForm']/child::*[contains(text(),'Войти')]";
+
+        driver.findElement(By.xpath(loginButton)).click();
+        driver.findElement(By.xpath(emailInput)).sendKeys("vasilieva.katerina26@gmail.com");
+        driver.findElement(By.xpath(passwordInput)).sendKeys("d9PWnw");
+        driver.findElement(By.xpath(submitButton)).click();
 
         WebElement dynamicElement = (new WebDriverWait(driver, 10)).until(ExpectedConditions.
                 presenceOfElementLocated(By.xpath("//*[@id=\"tabsControl\"]/li[1]/a")));
-        Assert.assertEquals("Мои задания", driver.getTitle());
 
-        WebElement slovar = driver.findElement(By.xpath("/html/body/div[2]/div[1]/div/div[1]/a"));
-        slovar.click();
+        Assert.assertEquals(driver.getTitle(), "Мои задания");
 
-        WebElement poleVvodaSlov = driver.findElement(By.name("search"));
-        poleVvodaSlov.sendKeys("dog");
+        String slovar = "/html/body/div[2]/div[1]/div/div[1]/a";
+        driver.findElement(By.xpath(slovar)).click();
 
-        WebElement addButton = driver.findElement(By.xpath("//*[@id=\"glossaryPage\"]/div[3]/div[2]/div[1]/div[2]/div/div/form/button/span"));
-        addButton.click();
+        String poleVvodaSlov = "search";
+        driver.findElement(By.name(poleVvodaSlov)).sendKeys("dog");
 
-        driver.quit();
-
+        String addButton = "//*[@id=\"glossaryPage\"]/div[3]/div[2]/div[1]/div[2]/div/div/form/button/span";
+        driver.findElement(By.xpath(addButton)).click();
     }
+
+
+    @AfterTest
+    public void tearDown() {
+        driver.close();
+    }
+
 }
 
